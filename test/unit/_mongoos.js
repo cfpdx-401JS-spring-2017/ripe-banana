@@ -1,0 +1,2 @@
+
+require('mongoose').Promise = Promise;
