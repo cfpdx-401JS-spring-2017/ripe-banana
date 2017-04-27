@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "pretest": "eslint .",
+    "//pretest": "eslint .",
     "test": "mocha --recursive",
     "test:unit": "mocha test/unit",
     "test:e2e": "mocha test/e2e",
