@@ -1,5 +1,5 @@
 //don't use chai b/c that's for api, not testing the part that makes api calls
-const assert = require('assert'); 
+const assert = require('assert');
 const Studio = require('../../lib/models/studio');
 
 const expectedValidation = () => { throw new Error('expected validation errors'); };
@@ -27,3 +27,4 @@ describe('Validation failures', () => {
     });
 
 });
+
