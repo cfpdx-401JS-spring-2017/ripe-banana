@@ -55,7 +55,7 @@ describe('studios api', () => {
 
     }
 
-    it('rountrips a new homie', () => {
+    it('rountrips a new studio', () => {
         return saveStudio(fakeStudio1)
             .then(savedStudio => {
                 assert.ok(savedStudio._id, 'saved has id');
