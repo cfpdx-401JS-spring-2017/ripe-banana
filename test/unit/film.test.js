@@ -5,7 +5,7 @@ const expectedValidation = () => { throw new Error('expected validation errors')
 
 describe('Film validations', () => {
 
-    it.only('validates film name', () => {
+    it('validates film name', () => {
         const testFilm = new Film({
             title: 'Clueless',
             released: 1995
@@ -16,7 +16,7 @@ describe('Film validations', () => {
 
 describe('Validation failures', () => {
 
-    it('requires name', () => {
+    it('requires film title and release year', () => {
         const film = new Film();
         return film.validate()
             .then(expectedValidation,
