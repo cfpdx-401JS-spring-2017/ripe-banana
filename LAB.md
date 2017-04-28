@@ -19,7 +19,7 @@ that made them as well as the actors in the film.
 
 ```
 {
-  name: <name-of-studio>,
+  name: <name-of-studio R>,
   address: {
     city: city
     state: state
@@ -32,9 +32,9 @@ that made them as well as the actors in the film.
 
 ```
 {
-  title: <name-of-film>,
-  studio: <studio-id>,
-  released: <year>
+  title: <name-of-film R>,
+  studio: <studio-id R>,
+  released: <year R>
   cast: [cast-subdocument]
 }
 ```
@@ -43,8 +43,8 @@ that made them as well as the actors in the film.
 
 ```
 {
-  role: <name-of-character>,
-  actor: <actor-id>
+  role: <name-of-character R>,
+  actor: <actor-id R>
 }
 ```
 
@@ -52,7 +52,7 @@ that made them as well as the actors in the film.
 
 ```
 { 
-  name: <name>,
+  name: <name R>,
   dob: <date-of-birth>
 }
 ```
@@ -61,9 +61,9 @@ that made them as well as the actors in the film.
 
 ```
 { 
-  rating: <number 1-5>,
+  rating: <number 1-5 R>,
   review: <review-text, max-length 140 chars>,
-  film: <film-id>
+  film: <film-id R>
 }
 ```
 
