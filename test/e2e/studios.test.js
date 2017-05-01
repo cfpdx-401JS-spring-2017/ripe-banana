@@ -1,6 +1,9 @@
 const db = require('./_db');
 const request = require('./_request');
 const assert = require('chai').assert;
+const Film = require('../../lib/models/film');
+// const Studio = require('../../lib/models/studio');
+
 
 describe('studios api', () => {
 
@@ -15,158 +18,163 @@ describe('studios api', () => {
             });
     });
 
+    let fakeStudio1 = {
+        name: 'fake studio',
+        address: {
+            city: 'faketown',
+            country: 'usa'
+        }
+    };
 
+    let fakeStudio2 = {
+        name: 'fake studio2',
+        address: {
+            city: 'fakertown',
+            country: 'usa'
 
-    it('returns list of the film title associated with a studio id', () => {
-        let testFilm = {
-            title: 'Clueless',
-            studio: 'fakeStudio3'
         }
 
+    };
+
+    let fakeStudio3 = {
+        name: 'fake studio3',
+        address: {
+            city: 'fakesttown',
+            country: 'usa'
+
+        }
+
+    };
+
+
+    function saveStudio(studio) {
         return request
-            .get(`/api/studios/${fakeStudio3._id}`) //trying to make it return {name, address, films}
-            .then(res => {
-                const studio = res.body
-                assert.deepEqual('', )
+            .post('/api/studios')
+            .send(studio)
+            .then(res => res.body);
+
+    }
+
+    it('rountrips a new studio', () => {
+        return saveStudio(fakeStudio1)
+            .then(savedStudio => {
+                assert.ok(savedStudio._id, 'saved has id');
+                fakeStudio1 = savedStudio;
+            })
+            .then(() => {
+                return request.get(`/api/studios/${fakeStudio1._id}`);
 
             })
+            .then(res => res.body)
+            .then(gotStudio => {
+                // delete fakeStudio1.__v;
+                assert.deepEqual(gotStudio, Object.assign({}, fakeStudio1, { films: [] }));
+            });
+    });
 
-
-
-        let fakeStudio1 = {
-            name: 'fake studio',
-            address: {
-                city: 'faketown',
-                state: 'califeaux',
-                country: 'usa'
+    it('GET returns 404 for non-existent id', () => {
+        const fakeId = '5201103b8896909da4402997';
+        return request.get(`/api/studios/${fakeId}`)
+            .then(
+            () => { throw new Error('expected 404'); },
+            res => {
+                assert.equal(res.status, 404);
             }
-        };
+            );
+    });
 
-        let fakeStudio2 = {
-            name: 'fake studio2',
-            address: {
-                city: 'fakertown',
-                state: 'califeaux',
-                country: 'usa'
+    it('returns list of all studios', () => {
 
-            }
-
-        };
-
-        let fakeStudio3 = {
-            name: 'fake studio3',
-            address: {
-                city: 'fakesttown',
-                state: 'califeaux',
-                country: 'usa'
-
-            }
-
-        };
-
-
-        function saveStudio(studio) {
-            return request
-                .post('/api/studios')
-                .send(studio)
-                .then(res => res.body);
-
-        }
-
-        it('rountrips a new studio', () => {
-            return saveStudio(fakeStudio1)
-                .then(savedStudio => {
-                    assert.ok(savedStudio._id, 'saved has id');
-                    fakeStudio1 = savedStudio;
-                })
-                .then(() => {
-                    return request.get(`/api/studios/${fakeStudio1._id}`);
-                })
-                .then(res => res.body)
-                .then(gotStudio => {
-                    assert.deepEqual(gotStudio, fakeStudio1);
-                });
-        });
-
-        it('GET returns 404 for non-existent id', () => {
-            const fakeId = '5201103b8896909da4402997';
-            return request.get(`/api/studios/${fakeId}`)
-                .then(
-                () => { throw new Error('expected 404'); },
-                res => {
-                    assert.equal(res.status, 404);
+        return Promise.all([
+            saveStudio(fakeStudio2),
+            saveStudio(fakeStudio3)
+        ])
+            .then(savedStudio => {
+                fakeStudio2 = savedStudio[0];
+                fakeStudio3 = savedStudio[1];
+            })
+            .then(() => request.get('/api/studios'))
+            .then(res => res.body)
+            .then(studios => {
+                assert.equal(studios.length, 3);
+                function test(fakeStudio) {
+                    assert.include(studios, { name: fakeStudio.name, _id: fakeStudio._id });
                 }
-                );
+
+                test(fakeStudio1);
+                test(fakeStudio2);
+                test(fakeStudio3);
+            });
+    });
+
+
+    describe('GET /studios/:id', () => {
+        let testFilm = null;
+        before(() => {
+
+            testFilm = {
+                title: 'Clueless',
+                studio: fakeStudio2._id,
+                released: '1995',
+            };
+            return new Film(testFilm).save()
+                .then(savedFilm => {
+                    testFilm = savedFilm;
+                });
+
         });
 
-        it('returns list of all studios', () => {
+        it('returns list of the film title associated with a studio id', () => {
+            return request
+                .get(`/api/studios/${fakeStudio2._id}`) //trying to make it return {name, address, films}
+                .then(res => {
+                    const studio = res.body;
+                    assert.deepEqual(studio, Object.assign(fakeStudio2, { films: [{ _id: testFilm._id.toString(), title: testFilm.title }] }));
 
-            return Promise.all([
-                saveStudio(fakeStudio2),
-                saveStudio(fakeStudio3)
-            ])
-                .then(savedStudio => {
-                    fakeStudio2 = savedStudio[0];
-                    fakeStudio3 = savedStudio[1];
-                })
-                .then(() => request.get('/api/studios'))
-                .then(res => res.body)
-                .then(studios => {
-                    assert.equal(studios.length, 3);
-                    assert.include(studios, fakeStudio1);
-                    assert.include(studios, fakeStudio2);
-                    assert.include(studios, fakeStudio3);
                 });
         });
-
-
-
-
-
-
-
-
-
-
-        it('updates studios', () => {
-            fakeStudio3.name = 'Patton Pictures';
-            return request.put(`/api/studios/${fakeStudio3._id}`)
-                .send(fakeStudio3)
-                .then(res => res.body)
-                .then(updated => {
-                    assert.equal(updated.name, 'Patton Pictures');
-                });
-        });
-
-        it('deletes a studio', () => {
-            return request.delete(`/api/studios/${fakeStudio3._id}`)
-                .then(res => res.body)
-                .then(result => {
-                    assert.isTrue(result.removed);
-                })
-                .then(() => request.get('/api/studios'))
-                .then(res => res.body)
-                .then(studios => {
-                    assert.equal(studios.length, 2);
-                });
-        });
-
-        it('deletes a non-eistent studio, returns removed false', () => {
-            return request.delete(`/api/studios/${fakeStudio3._id}`)
-                .then(res => res.body)
-                .then(result => {
-                    assert.isFalse(result.removed);
-                });
-        });
-
-        it('errors on validation falure', () => {
-            return saveStudio({})
-                .then(
-                () => { throw new Error('expected failure'); },
-                () => { }
-                );
-        });
-
 
     });
 
+
+    it('updates studios', () => {
+        fakeStudio3.name = 'Patton Pictures';
+        return request.put(`/api/studios/${fakeStudio3._id}`)
+            .send(fakeStudio3)
+            .then(res => res.body)
+            .then(updated => {
+                assert.equal(updated.name, 'Patton Pictures');
+            });
+    });
+
+    it('deletes a studio', () => {
+        return request.delete(`/api/studios/${fakeStudio3._id}`)
+            .then(res => res.body)
+            .then(result => {
+                assert.isTrue(result.removed);
+            })
+            .then(() => request.get('/api/studios'))
+            .then(res => res.body)
+            .then(studios => {
+                assert.equal(studios.length, 2);
+            });
+    });
+
+    it('deletes a non-eistent studio, returns removed false', () => {
+        return request.delete(`/api/studios/${fakeStudio3._id}`)
+            .then(res => res.body)
+            .then(result => {
+                assert.isFalse(result.removed);
+            });
+    });
+
+    it('errors on validation falure', () => {
+        return saveStudio({})
+            .then(
+            () => { throw new Error('expected failure'); },
+            () => { }
+            );
+    });
+
+
+});
