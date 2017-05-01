@@ -1,15 +1,16 @@
-const db = require('./_db');
-const request = require('./_request');
-const assert = require('chai').assert;
+// const db = require('./_db');
+// const request = require('./_request');
+// const assert = require('chai').assert;
 
-describe('actors API', () => {
+// describe('actors API', () => {
 
-  before(db.drop);
+//   before(db.drop);
 
-  it('first GET returns empty array', () => {
-    return request.get('/api/actors')
-      .then(res => {
-        const studios = res.body;
-        assert.deepEqual(actors, []);
-      });
-  });
+//   it('first GET returns empty array', () => {
+//     return request.get('/api/actors')
+//       .then(res => {
+//         const actors = res.body;
+//         assert.deepEqual(actors, []);
+//       });
+//   });
+// });

@@ -10,7 +10,6 @@ describe('actor validations', () => {
       dob: 1976
     });
 
-    actor.save();
     return actor.validate();
   });
 });
