@@ -7,7 +7,7 @@ describe('studio API', () => {
     before(db.drop);
 
     it('first GET returns empty array', () => {
-        return request.get('/api/studios')
+        return request.get('/studios')
             .then(res => {
                 const studios = res.body;
                 assert.deepEqual(studios, []);
@@ -34,7 +34,7 @@ describe('studio API', () => {
 
     function saveStudio(studio) {
         return request
-            .post('/api/studios')
+            .post('/studios')
             .send(studio)
             .then(res => res.body);
     }
@@ -46,7 +46,7 @@ describe('studio API', () => {
                 bigStudio = saved;
             })
             .then(() => {
-                return request.get(`/api/studios/${bigStudio._id}`);
+                return request.get(`/studios/${bigStudio._id}`);
             })
             .then(res => res.body)
             .then(got => {
@@ -56,12 +56,12 @@ describe('studio API', () => {
 
     it('gets 404 for nonexistent id', () => {
         const notId = '589d04a8b6695bbdfd3106f1';
-        return request.get(`/api/studios/${notId}`)
+        return request.get(`/studios/${notId}`)
             .then(
-                () => { throw new Error('expected 404'); },
-                res => {
-                    assert.equal(res.status, 404);
-                }
+            () => { throw new Error('expected 404'); },
+            res => {
+                assert.equal(res.status, 404);
+            }
             );
     });
 
@@ -70,7 +70,7 @@ describe('studio API', () => {
             .then(saved => {
                 littleStudio = saved;
             })
-            .then(() => request.get('/api/studios'))
+            .then(() => request.get('/studios'))
             .then(res => res.body)
             .then(studios => {
                 delete littleStudio.__v;
@@ -83,7 +83,7 @@ describe('studio API', () => {
 
     it('updates a studio', () => {
         littleStudio.name = 'tiny studio';
-        return request.put(`/api/studios/${littleStudio._id}`)
+        return request.put(`/studios/${littleStudio._id}`)
             .send(littleStudio)
             .then(res => res.body)
             .then(updated => {
@@ -92,12 +92,12 @@ describe('studio API', () => {
     });
 
     it('deletes a studio', () => {
-        return request.delete(`/api/studios/${littleStudio._id}`)
+        return request.delete(`/studios/${littleStudio._id}`)
             .then(res => res.body)
             .then(result => {
                 assert.isTrue(result.removed);
             })
-            .then(() => request.get('/api/studios'))
+            .then(() => request.get('/studios'))
             .then(res => res.body)
             .then(studios => {
                 assert.equal(studios.length, 1);
@@ -105,7 +105,7 @@ describe('studio API', () => {
     });
 
     it('deleting a non-existent studio returns removed:false', () => {
-        return request.delete(`/api/studios/${littleStudio._id}`)
+        return request.delete(`/studios/${littleStudio._id}`)
             .then(res => res.body)
             .then(result => {
                 assert.isFalse(result.removed);
@@ -115,8 +115,32 @@ describe('studio API', () => {
     it('returns validation error correclty', () => {
         return saveStudio({})
             .then(
-                () => { throw new Error('expected failure'); },
-                () => { }  
+            () => { throw new Error('expected failure'); },
+            () => { }
             );
+    });
+
+// TODO: refactor this to work with the implentation. partway done
+    it('saved a studio with films', () => {
+        let studio = {
+            name: 'cool studio',
+            address: {},
+            films: [{
+                films: films._id
+            }]
+        };
+        return saveStudio(studio)
+            .then(saved => {
+                studio = saved;
+                assert.ok(studio.films.length);
+            })
+            .then(() => request.get(`/studios/${studio._id}`))
+            .then(res => res.body)
+            .then(studios => {
+                assert.deepEqual(studios.films, [{
+                    title: films.title
+                    // add other fields if needed
+                }]);
+            });
     });
 });
