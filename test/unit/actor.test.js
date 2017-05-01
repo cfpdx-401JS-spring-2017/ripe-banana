@@ -1,7 +1,6 @@
 // const assert = require('assert');
 const Actor = require('../../lib/models/actor');
 
-// const expectedValidation = () => { throw new Error('expected validation errors but did not get any'); };
 
 describe('actor validations', () => {
 
