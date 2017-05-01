@@ -81,7 +81,13 @@ describe('studio API', () => {
             });
     });
 
-    // it('updates a studio', () => {
-
-    // });
+    it('updates a studio', () => {
+        littleStudio.name = 'tiny studio';
+        return request.put(`/api/studios/${littleStudio._id}`)
+            .send(littleStudio)
+            .then(res => res.body)
+            .then(updated => {
+                assert.equal(updated.name, 'tiny studio');
+            });
+    });
 });
