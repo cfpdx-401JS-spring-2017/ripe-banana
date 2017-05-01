@@ -90,4 +90,33 @@ describe('studio API', () => {
                 assert.equal(updated.name, 'tiny studio');
             });
     });
+
+    it('deletes a studio', () => {
+        return request.delete(`/api/studios/${littleStudio._id}`)
+            .then(res => res.body)
+            .then(result => {
+                assert.isTrue(result.removed);
+            })
+            .then(() => request.get('/api/studios'))
+            .then(res => res.body)
+            .then(studios => {
+                assert.equal(studios.length, 1);
+            });
+    });
+
+    it('deleting a non-existent studio returns removed:false', () => {
+        return request.delete(`/api/studios/${littleStudio._id}`)
+            .then(res => res.body)
+            .then(result => {
+                assert.isFalse(result.removed);
+            });
+    });
+
+    it('returns validation error correclty', () => {
+        return saveStudio({})
+            .then(
+                () => { throw new Error('expected failure'); },
+                () => { }  
+            );
+    });
 });
