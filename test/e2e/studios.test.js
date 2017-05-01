@@ -21,14 +21,14 @@ describe('studios API', () => {
     }
   };
 
-  let fakeStudio2 = {
-    name: 'Disney',
-    address: {
-      city: 'Burbank',
-      state: 'California',
-      country: 'USA'
-    }
-  };
+  // let fakeStudio2 = {
+  //   name: 'Disney',
+  //   address: {
+  //     city: 'Burbank',
+  //     state: 'California',
+  //     country: 'USA'
+  //   }
+  // };
 
   function savedStudio(studio) {
     return request.post('/api/studios')
