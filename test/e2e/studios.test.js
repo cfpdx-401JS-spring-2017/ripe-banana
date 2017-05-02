@@ -68,11 +68,10 @@ describe('Studios API', () => {
   });
 
   it('returns list of all studios', () => {
-    return Promise.all([
-      saveStudio(laika)
-    ])
-      .then(savedStudios => {
-        laika = savedStudios[0];
+    return saveStudio(laika)
+      .then(saved => {
+        assert.ok(saved._id, 'laika has id');
+        laika = saved;
       })
       .then(() => request.get('/api/studios'))
       .then(res => res.body)
