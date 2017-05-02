@@ -52,4 +52,20 @@ describe('studios API', () => {
         assert.deepEqual(studio, fakeStudio);
       });
   });
+
+  it('deletes a studio', () => {
+    return request.delete(`/api/studios/${fakeStudio._id}`)
+      .then(res => res.body)
+      .then(deletedResponse => {
+        assert.deepEqual(deletedResponse, { removed: true });
+      })
+      .then(() => {
+        return request.get(`/api/studios/${fakeStudio._id}`);
+      })
+      .then(() => {
+        throw new Error('Getting studio should fail but didn\'t');
+      }, response => {
+        assert.equal(response.status, 404);
+      });
+  });
 });
