@@ -95,9 +95,9 @@ describe.only('films api', () => {
                     _id: film._id,
                     title: film.title,
                     cast: [{
-                        actor:{
+                        actor: {
                             name: 'Alicia Silverstone',
-                        } ,
+                        },
                         role: 'Cher'
                     }],
                     studio: {
@@ -106,10 +106,19 @@ describe.only('films api', () => {
 
                     }
                 };
-                console.log('***got film', gotFilm);
-                console.log('***expected film', expectedFilm);
                 assert.deepEqual(gotFilm, expectedFilm);
             });
+    });
+
+    it('GET returns 404 for non-existent id', () => {
+        const fakeId = '5201103b8896909da4402997';
+        return request.get(`/api/films/${fakeId}`)
+            .then(
+            () => { throw new Error('expected 404'); },
+            res => {
+                assert.equal(res.status, 404);
+            }
+            );
     });
 
 
