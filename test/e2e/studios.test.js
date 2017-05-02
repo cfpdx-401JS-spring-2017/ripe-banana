@@ -49,7 +49,11 @@ describe('Studios API', () => {
       })
       .then(res => res.body)
       .then(studio => {
-        assert.deepEqual(studio, paramount);
+        assert.deepEqual(studio, {
+          _id: paramount._id,
+          name: paramount.name,
+          address: paramount.address
+        });
       });
   });
 

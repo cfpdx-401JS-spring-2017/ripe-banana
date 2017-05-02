@@ -23,49 +23,84 @@ describe('Films API', () => {
     }
   };
 
-  function saveStudio(studio) {
+  before(() => {
     return request.post('/api/studios')
-      .send(studio)
-      .then(res => res.body);
-  }
+      .send(laika)
+      .then(res => {
+        laika = res.body;
+      });
+  });
+
+  let poppyHarlow = {
+    name: 'Poppy Harlow',
+    dob: 1977
+  };
+
+  before(() => {
+    return request.post('/api/actors')
+      .send(poppyHarlow)
+      .then(res => res.body)
+      .then(saved => poppyHarlow = saved);
+  });
 
   let coraline = {
     title: 'Coraline',
-    studio: '',
+    studio: laika._id,
     released: '2005',
     cast: []
   };
 
   let kubo = {
     title: 'Kubo and the Two Strings',
-    studio: '',
+    studio: laika._id,
     released: '2016',
     cast: []
   };
 
   function saveFilm(film) {
+    film.studio = laika._id;
     return request.post('/api/films')
       .send(film)
       .then(res => res.body);
   }
 
   it('save a film with studio', () => {
-    return saveStudio(laika)
-      .then(studio => {
-        assert.ok(studio._id, 'studio saved with id');
-        coraline.studio = laika._id = studio._id;
-      })
-      .then(() => {
-        return saveFilm(coraline);
-      })
+    coraline.cast = [{
+      role: 'Coraline',
+      actor: poppyHarlow._id
+    }];
+    return saveFilm(coraline)
       .then(saved => {
         assert.ok(saved._id, 'saved has id');
         coraline = saved;
       });
   });
 
+  it('returns a film by id', () => {
+    return request.get(`/api/films/${coraline._id}`)
+      .then(res => res.body)
+      .then(film => {
+        assert.deepEqual(film, {
+          _id: coraline._id,
+          title: coraline.title,
+          cast: [{
+            _id: coraline.cast[0]._id,
+            actor: {
+              _id: poppyHarlow._id,
+              name: poppyHarlow.name
+            },
+            role: coraline.cast[0].role,
+          }],
+          studio: {
+            _id: laika._id,
+            name: laika.name
+          },
+          released: 2005
+        });
+      });
+  });
+
   it('returns list of all films', () => {
-    kubo.studio = laika._id;
     return Promise.all([
       saveFilm(kubo)
     ])
@@ -76,8 +111,14 @@ describe('Films API', () => {
       .then(res => res.body)
       .then(films => {
         assert.equal(films.length, 2);
-        assert.include(films, coraline);
-        assert.include(films, kubo);
+        assert.deepEqual(films[0], {
+          _id: coraline._id,
+          title: coraline.title,
+        });
+        assert.include(films, {
+          _id: kubo._id,
+          title: kubo.title
+        });
       });
   });
 

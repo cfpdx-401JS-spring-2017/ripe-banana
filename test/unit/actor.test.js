@@ -10,7 +10,7 @@ describe('Actor Model', () => {
     it('validation success', () => {
       const djr = new Actor({
         name: 'David Rappoccio',
-        dob: 'January 29, 2088'
+        dob: 2088
       });
       return djr.validate();
     });
