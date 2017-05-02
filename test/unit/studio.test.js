@@ -11,6 +11,7 @@ describe('Studio validations', () => {
     });
     return testStudio.validate();
   });
+
   describe('validation failures', () => {
     
     it('requires name', () => {
