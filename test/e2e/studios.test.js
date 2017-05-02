@@ -90,7 +90,11 @@ describe('Studios API', () => {
   });
 
   it('removes a studio', () => {
-    //
+    return request.delete(`/api/studios/${laika._id}`)
+      .then(res => res.body)
+      .then(result => {
+        assert.isTrue(result.removed);
+      });
   });
 
 });
