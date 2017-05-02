@@ -2,7 +2,7 @@ const db = require('./_db');
 const request = require('./_request');
 const assert = require('chai').assert;
 
-describe.only('actors api', () => {
+describe('actors api', () => {
 
     before(db.drop);
 
@@ -92,7 +92,7 @@ describe.only('actors api', () => {
             .send(fakeActor3)
             .then(res => res.body)
             .then(updated => {
-                assert.equal(updated.name, 'updated name');
+                assert.equal(updated.name, 'updated fake');
             });
     });
 
