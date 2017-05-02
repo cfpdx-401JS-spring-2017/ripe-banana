@@ -49,7 +49,7 @@ describe('Films API', () => {
       .then(res => res.body);
   }
 
-  it.only('save a film with studio', () => {
+  it('save a film with studio', () => {
     return saveStudio(laika)
       .then(studio => {
         assert.ok(studio._id, 'studio saved with id');
@@ -64,7 +64,7 @@ describe('Films API', () => {
       });
   });
 
-  it.only('returns list of all films', () => {
+  it('returns list of all films', () => {
     kubo.studio = laika._id;
     return Promise.all([
       saveFilm(kubo)
@@ -75,8 +75,6 @@ describe('Films API', () => {
       .then(() => request.get('/api/films'))
       .then(res => res.body)
       .then(films => {
-        console.log('Films: ', films);
-        console.log('Coraline:', coraline);
         assert.equal(films.length, 2);
         assert.include(films, coraline);
         assert.include(films, kubo);
