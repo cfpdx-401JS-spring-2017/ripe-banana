@@ -1,0 +1,24 @@
+const assert = require('chai').assert;
+const Actor = require('../../lib/models/actor');
+
+const expectedValidation = () => { throw new Error('expected validation errors'); };
+
+describe('Actor Model', () => {
+
+  describe('validations pass', () => {
+
+    it('validation success', () => {
+      const djr = new Actor({
+        name: 'David Rappoccio',
+        dob: 'January 29, 2088'
+      });
+      return djr.validate();
+    });
+
+  });
+
+  describe('validation fails', () => {
+
+  });
+
+});
