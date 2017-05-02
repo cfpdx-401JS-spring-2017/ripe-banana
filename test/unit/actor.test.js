@@ -6,11 +6,11 @@ const expectedValidation = () => { throw new Error('expected validation error');
 describe('actor validations', () => {
 
     it('validates actor name', () => {
-        const testactor = new Actor({
+        const testActor = new Actor({
             name: 'jeff bridges',
             dob: 1920
         });
-        return testactor.validate();
+        return testActor.validate();
     });
 
     describe('validation failures', () => {
