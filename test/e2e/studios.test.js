@@ -52,7 +52,8 @@ describe('Studios API', () => {
         assert.deepEqual(studio, {
           _id: paramount._id,
           name: paramount.name,
-          address: paramount.address
+          address: paramount.address,
+          films: []
         });
       });
   });
@@ -77,8 +78,14 @@ describe('Studios API', () => {
       .then(res => res.body)
       .then(studios => {
         assert.equal(studios.length, 2);
-        assert.include(studios, paramount);
-        assert.include(studios, laika);
+        assert.include(studios, {
+          _id: paramount._id,
+          name: paramount.name
+        });
+        assert.include(studios, {
+          _id: laika._id,
+          name: laika.name
+        });
       });
   });
 
