@@ -1,5 +1,5 @@
 /* Let's connect to mongo once here */
-process.env.MONGODB_URI = 'mongodb://localhost:27017/musicIskewl-test';
+process.env.MONGODB_URI = 'mongodb://localhost:27017/movie-test';
 require('../../lib/connect');
 const connection = require('mongoose').connection;
 
