@@ -36,7 +36,7 @@ describe('Films API', () => {
     cast: []
   };
 
-  let kuboTwoStrings = {
+  let kubo = {
     title: 'Kubo and the Two Strings',
     studio: '',
     released: '2016',
@@ -49,18 +49,38 @@ describe('Films API', () => {
       .then(res => res.body);
   }
 
-  it('save a film with studio', () => {
+  it.only('save a film with studio', () => {
     return saveStudio(laika)
-    .then(studio => {
-      assert.ok(studio._id, 'studio saved with id');
-      coraline.studio = laika._id = studio._id;
-    })
-    .then(() => {
-      return saveFilm(coraline);
-    })
-    .then(saved => {
-      assert.ok(saved._id, 'saved has id');
-    });
+      .then(studio => {
+        assert.ok(studio._id, 'studio saved with id');
+        coraline.studio = laika._id = studio._id;
+      })
+      .then(() => {
+        return saveFilm(coraline);
+      })
+      .then(saved => {
+        assert.ok(saved._id, 'saved has id');
+        coraline = saved;
+      });
+  });
+
+  it.only('returns list of all films', () => {
+    kubo.studio = laika._id;
+    return Promise.all([
+      saveFilm(kubo)
+    ])
+      .then(savedFilms => {
+        kubo = savedFilms[0];
+      })
+      .then(() => request.get('/api/films'))
+      .then(res => res.body)
+      .then(films => {
+        console.log('Films: ', films);
+        console.log('Coraline:', coraline);
+        assert.equal(films.length, 2);
+        assert.include(films, coraline);
+        assert.include(films, kubo);
+      });
   });
 
 });

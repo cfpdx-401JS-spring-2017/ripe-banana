@@ -18,7 +18,15 @@ describe('Actor Model', () => {
   });
 
   describe('validation fails', () => {
-
+    it('requires name', () => {
+      const actress = new Actor();
+      return actress.validate()
+      .then(expectedValidation, 
+      err => {
+        const errors = err.errors;
+        assert.ok(errors.name && errors.name.kind === 'required');
+      });
+    });
   });
 
 });

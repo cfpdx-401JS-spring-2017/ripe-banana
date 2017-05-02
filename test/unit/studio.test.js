@@ -32,6 +32,7 @@ describe('Studio Model', () => {
         assert.ok(errors.name && errors.name.kind === 'required');
       });
     });
+    
   });
 
 
