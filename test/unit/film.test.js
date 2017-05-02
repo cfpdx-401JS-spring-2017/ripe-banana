@@ -1,32 +1,32 @@
-// const assert = require('assert');
-// const Film = require('../../lib/models/film');
+const assert = require('assert');
+const Film = require('../../lib/models/film');
 
-// const expectedValidation = () => { throw new Error('expected validation errors but did not get any'); };
+const expectedValidation = () => { throw new Error('expected validation errors but did not get any'); };
 
-// describe('Film validations', () => {
+describe('Film validations', () => {
 
-//   it('validates film name', () => {
-//     const studioObject = new studioObject({
+  it('validates film name', () => {
+    const studioObject = new studioObject({
       
-//     });
-//     const testFilm = new Film({
-//       name: 'Clueless',
-//       studio: studio._id,
-//       released: 1995
-//     });
-//     return testFilm.validate();
-//   });
-//   describe('validation failures', () => {
+    });
+    const testFilm = new Film({
+      name: 'Clueless',
+      studio: studio._id,
+      released: 1995
+    });
+    return testFilm.validate();
+  });
+  describe('validation failures', () => {
     
-//     it('requires name', () => {
-//       const film = new Film();
-//       return film.validate()
-//         .then(expectedValidation, 
-//           err => {
-//             const errors = err.errors;
-//             assert.ok(errors.name && errors.name.kind === 'required');
-//           });
-//     });
-//   });
-// }); 
+    it('requires name', () => {
+      const film = new Film();
+      return film.validate()
+        .then(expectedValidation, 
+          err => {
+            const errors = err.errors;
+            assert.ok(errors.name && errors.name.kind === 'required');
+          });
+    });
+  });
+}); 
 
