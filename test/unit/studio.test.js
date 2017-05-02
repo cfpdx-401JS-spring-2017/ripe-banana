@@ -3,7 +3,7 @@ const Studio = require('../../lib/models/studio');
 
 const expectedValidation = () => { throw new Error('expected validation errors'); };
 
-describe('Studio model', () => {
+describe('Studio Model', () => {
 
   describe('happy path', () => {
 
@@ -25,7 +25,6 @@ describe('Studio model', () => {
 
     it('requires name', () => {
       const studio = new Studio();
-      
       return studio.validate()
       .then(expectedValidation, 
       err => {

@@ -53,4 +53,13 @@ describe('Studios API', () => {
       });
   });
 
+  it('returns 404 if the coffee does not exist', () => {
+    const notId = '589d04a8b6695bbdfd3106f1';
+    return request.get(`/api/coffees/${notId}`)
+      .then(() => { throw new Error('expected 404'); },
+      res => {
+        assert.equal(res.status, '404');
+      });
+  });
+
 });
