@@ -33,16 +33,13 @@ describe('Film Model', () => {
     it('no studio', () => {
       const indieFilm = new Film({
         name: 'Arrival',
-        studio: 000,
+        studio: 90909,
         released: 2016
       });
       return indieFilm.validate()
         .then(expectedValidation,
         err => {
           const errors = err.errors;
-          console.log('KIND: ', errors.studio.kind);
-          console.log('ERR: ', errors.studio);
-          console.log(indieFilm.studio);
           assert.ok(errors.studio && errors.studio.kind === 'ObjectID');
         });
     });
