@@ -67,7 +67,6 @@ describe('studios api', () => {
             })
             .then(res => res.body)
             .then(gotStudio => {
-                // delete fakeStudio1.__v;
                 assert.deepEqual(gotStudio, Object.assign({}, fakeStudio1, { films: [] }));
             });
     });
