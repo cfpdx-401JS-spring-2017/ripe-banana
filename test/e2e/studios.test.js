@@ -2,7 +2,7 @@ const db = require('./_db');
 const request = require('./_request');
 const assert = require('chai').assert;
 
-describe('studio API', () => {
+describe.only('studio API', () => {
 
     before(db.drop);
 
@@ -73,11 +73,18 @@ describe('studio API', () => {
             .then(() => request.get('/studios'))
             .then(res => res.body)
             .then(studios => {
-                delete littleStudio.__v;
-                delete bigStudio.__v;
+                console.log('studios', studios, 'bigstudio',  bigStudio);
                 assert.equal(studios.length, 2);
-                assert.include(studios, bigStudio);
-                assert.include(studios, littleStudio);
+                assert.include(studios, {
+                    _id: bigStudio._id,
+                    name: bigStudio.name,
+                    address: bigStudio.address
+                });
+                assert.include(studios, {
+                    _id: littleStudio._id,
+                    name: littleStudio.name,
+                    address: littleStudio.address
+                });
             });
     });
 
@@ -126,7 +133,7 @@ describe('studio API', () => {
             name: 'cool studio',
             address: {},
             films: [{
-                films: films._id
+                films: studio.film._id
             }]
         };
         return saveStudio(studio)
@@ -138,7 +145,7 @@ describe('studio API', () => {
             .then(res => res.body)
             .then(studios => {
                 assert.deepEqual(studios.films, [{
-                    title: films.title
+                    title: studio.film.title
                     // add other fields if needed
                 }]);
             });

@@ -2,7 +2,7 @@ const db = require('./_db');
 const request = require('./_request');
 const assert = require('chai').assert;
 
-describe.only('film API', () => {
+describe('film API', () => {
 
     before(db.drop);
 
@@ -125,7 +125,6 @@ describe.only('film API', () => {
             );
     });
 
-    // TODO: refactor this to work with the implentation. partway done
     let actor = {
         name: 'actor mcactorface',
         dob: 1456
