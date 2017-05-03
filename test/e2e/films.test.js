@@ -59,10 +59,10 @@ describe.only('films api', () => {
 
     });
 
-    let film = null;
+    let fakeFilm = null;
     let cast = [{ role: 'Cher', actor: fakeActor1._id }];
 
-    film = {
+    fakeFilm = {
         title: 'Clueless',
         studio: fakeStudio1._id,
         released: 1995,
@@ -78,22 +78,22 @@ describe.only('films api', () => {
 
     }
 
-    it('rountrips a new film', () => {
-        film.cast = [{ role: 'Cher', actor: fakeActor1._id }];
-        return saveFilm(film)
+    it('rountrips a new film and GETS /films/:id ', () => {
+        fakeFilm.cast = [{ role: 'Cher', actor: fakeActor1._id }];
+        return saveFilm(fakeFilm)
             .then(savedFilm => {
                 assert.ok(savedFilm._id, 'saved film has id');
-                film = savedFilm;
+                fakeFilm = savedFilm;
             })
             .then(() => {
-                return request.get(`/api/films/${film._id}`);
+                return request.get(`/api/films/${fakeFilm._id}`);
 
             })
             .then(res => res.body)
             .then(gotFilm => {
                 let expectedFilm = {
-                    _id: film._id,
-                    title: film.title,
+                    _id: fakeFilm._id,
+                    title: fakeFilm.title,
                     cast: [{
                         actor: {
                             name: 'Alicia Silverstone',
@@ -118,6 +118,98 @@ describe.only('films api', () => {
             res => {
                 assert.equal(res.status, 404);
             }
+            );
+    });
+
+    // let film2 = {
+    //     title: 'Moonlight',
+    //     studio: fakeStudio1._id,
+    //     released: 2016,
+    //     cast: cast,
+    // };
+
+    // it('returns list of all film titles and their studio names', () => {
+
+    //     return Promise.all([
+    //         saveFilm(film),
+    //         saveFilm(film2)
+    //     ])
+
+    //         .then(savedFilm => {
+    //             film = savedFilm[0];
+    //             film2 = savedFilm[1];
+    //         })
+
+    //         .then(() => request.get('/api/films'))
+    //         .then(res => res.body)
+    //         .then(films => {
+    //             assert.equal(films.length, 2);
+    //             function test(film) {
+    //                 assert.include(films, [{ name: film.name, _id: film._id }]);
+    //             }
+
+    //             test(film);
+    //             test(film2);
+
+    //         });
+    // });
+
+    // describe('GET /films/:id', () => {   //Q: I did this in roundtrip, so no need to test again?
+    //     let testFilm = null;
+    //     before(() => {
+
+    //         testFilm = {
+    //             title: 'Clueless',
+    //             studio: {
+    //                 _id: fakeStudio1._id,
+    //                 name: fakeStudio1.name
+
+    //             },
+    //             released: '1995',
+    //         };
+    //         return new Film(testFilm).save()
+    //             .then(savedFilm => {
+    //                 testFilm = savedFilm;
+    //             });
+
+    //     });
+
+    it('updates films', () => {
+        fakeFilm.title = 'Fake Movie Title';
+        return request.put(`/api/films/${fakeFilm._id}`)
+            .send(fakeFilm)
+            .then(res => res.body)
+            .then(updated => {
+                assert.equal(updated.title, 'Fake Movie Title');
+            });
+    });
+
+    it('deletes a film', () => {
+        return request.delete(`/api/films/${fakeFilm._id}`)
+            .then(res => res.body)
+            .then(result => {
+                assert.isTrue(result.removed);
+            })
+            .then(() => request.get('/api/films'))
+            .then(res => res.body)
+            .then(films => {
+                assert.equal(films.length, 0);
+            });
+    });
+
+    it('deletes a non-eistent film, returns removed false', () => {
+        return request.delete(`/api/films/${fakeFilm._id}`)
+            .then(res => res.body)
+            .then(result => {
+                assert.isFalse(result.removed);
+            });
+    });
+
+    it('errors on validation falure', () => {
+        return saveFilm({})
+            .then(
+            () => { throw new Error('expected failure'); },
+            () => { }
             );
     });
 
