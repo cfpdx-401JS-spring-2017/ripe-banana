@@ -59,13 +59,27 @@ describe.only('films api', () => {
 
     });
 
-    let fakeFilm = null;
+    let fakeFilm1 = null;
     let cast = [{ role: 'Cher', actor: fakeActor1._id }];
 
-    fakeFilm = {
+    fakeFilm1 = {
         title: 'Clueless',
         studio: fakeStudio1._id,
         released: 1995,
+        cast: cast,
+    };
+
+    let fakeFilm2 = {
+        title: 'Moonlight',
+        studio: fakeStudio1._id,
+        released: 2016,
+        cast: cast,
+    };
+
+    let fakeFilm3 = {
+        title: 'Last Waltz',
+        studio: fakeStudio1._id,
+        released: 1975,
         cast: cast,
     };
 
@@ -79,21 +93,21 @@ describe.only('films api', () => {
     }
 
     it('rountrips a new film and GETS /films/:id ', () => {
-        fakeFilm.cast = [{ role: 'Cher', actor: fakeActor1._id }];
-        return saveFilm(fakeFilm)
+        fakeFilm1.cast = [{ role: 'Cher', actor: fakeActor1._id }];
+        return saveFilm(fakeFilm1)
             .then(savedFilm => {
                 assert.ok(savedFilm._id, 'saved film has id');
-                fakeFilm = savedFilm;
+                fakeFilm1 = savedFilm;
             })
             .then(() => {
-                return request.get(`/api/films/${fakeFilm._id}`);
+                return request.get(`/api/films/${fakeFilm1._id}`);
 
             })
             .then(res => res.body)
             .then(gotFilm => {
                 let expectedFilm = {
-                    _id: fakeFilm._id,
-                    title: fakeFilm.title,
+                    _id: fakeFilm1._id,
+                    title: fakeFilm1.title,
                     cast: [{
                         actor: {
                             name: 'Alicia Silverstone',
@@ -121,63 +135,53 @@ describe.only('films api', () => {
             );
     });
 
-    // let film2 = {
-    //     title: 'Moonlight',
-    //     studio: fakeStudio1._id,
-    //     released: 2016,
-    //     cast: cast,
-    // };
 
-    // it('returns list of all film titles and their studio names', () => {
+    it('returns list of all film titles and their studio names', () => {
+        fakeFilm2.cast = [{ role: 'Dude', actor: fakeActor1._id }];
+        fakeFilm3.cast = [{ role: 'Levon', actor: fakeActor1._id }];
 
-    //     return Promise.all([
-    //         saveFilm(film),
-    //         saveFilm(film2)
-    //     ])
+        return Promise.all([
+            saveFilm(fakeFilm2),
+            saveFilm(fakeFilm3),
 
-    //         .then(savedFilm => {
-    //             film = savedFilm[0];
-    //             film2 = savedFilm[1];
-    //         })
+        ])
 
-    //         .then(() => request.get('/api/films'))
-    //         .then(res => res.body)
-    //         .then(films => {
-    //             assert.equal(films.length, 2);
-    //             function test(film) {
-    //                 assert.include(films, [{ name: film.name, _id: film._id }]);
-    //             }
+            .then(savedFilm => {
+                fakeFilm2 = savedFilm[0];
+                fakeFilm3 = savedFilm[1];
+            })
 
-    //             test(film);
-    //             test(film2);
+            .then(() => request.get('/api/films'))
+            .then(res => res.body)
+            .then(gotfilms => {
+                assert.equal(gotfilms.length, 3);
 
-    //         });
-    // });
 
-    // describe('GET /films/:id', () => {   //Q: I did this in roundtrip, so no need to test again?
-    //     let testFilm = null;
-    //     before(() => {
+                function test(fakeFilm) {
 
-    //         testFilm = {
-    //             title: 'Clueless',
-    //             studio: {
-    //                 _id: fakeStudio1._id,
-    //                 name: fakeStudio1.name
+                    assert.include(gotfilms,
+                        {
+                            title: fakeFilm.title,
+                            _id: fakeFilm._id,
+                            studio: {
+                                name: fakeStudio1.name,
+                                _id: fakeStudio1._id,
+                            }
+                        });
+                }
 
-    //             },
-    //             released: '1995',
-    //         };
-    //         return new Film(testFilm).save()
-    //             .then(savedFilm => {
-    //                 testFilm = savedFilm;
-    //             });
+                test(fakeFilm1);
+                test(fakeFilm2);
+                test(fakeFilm3);
 
-    //     });
+            });
+    });
+
 
     it('updates films', () => {
-        fakeFilm.title = 'Fake Movie Title';
-        return request.put(`/api/films/${fakeFilm._id}`)
-            .send(fakeFilm)
+        fakeFilm1.title = 'Fake Movie Title';
+        return request.put(`/api/films/${fakeFilm1._id}`)
+            .send(fakeFilm1)
             .then(res => res.body)
             .then(updated => {
                 assert.equal(updated.title, 'Fake Movie Title');
@@ -185,7 +189,7 @@ describe.only('films api', () => {
     });
 
     it('deletes a film', () => {
-        return request.delete(`/api/films/${fakeFilm._id}`)
+        return request.delete(`/api/films/${fakeFilm1._id}`)
             .then(res => res.body)
             .then(result => {
                 assert.isTrue(result.removed);
@@ -193,12 +197,12 @@ describe.only('films api', () => {
             .then(() => request.get('/api/films'))
             .then(res => res.body)
             .then(films => {
-                assert.equal(films.length, 0);
+                assert.equal(films.length, 2);
             });
     });
 
     it('deletes a non-eistent film, returns removed false', () => {
-        return request.delete(`/api/films/${fakeFilm._id}`)
+        return request.delete(`/api/films/${fakeFilm1._id}`)
             .then(res => res.body)
             .then(result => {
                 assert.isFalse(result.removed);
