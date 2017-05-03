@@ -1,8 +1,8 @@
 const db = require('./_db');
 const request = require('./_request');
 const assert = require('chai').assert;
-const Film = require('../../lib/models/film');
-// const Studio = require('../../lib/models/studio');
+const Film = require('../../lib/models/film'); 
+
 
 
 describe('studios api', () => {
@@ -125,7 +125,7 @@ describe('studios api', () => {
 
         it('returns list of the film title associated with a studio id', () => {
             return request
-                .get(`/api/studios/${fakeStudio2._id}`) //trying to make it return {name, address, films}
+                .get(`/api/studios/${fakeStudio2._id}`)
                 .then(res => {
                     const studio = res.body;
                     assert.deepEqual(studio, Object.assign(fakeStudio2, { films: [{ _id: testFilm._id.toString(), title: testFilm.title }] }));

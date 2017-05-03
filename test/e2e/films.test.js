@@ -1,12 +1,9 @@
 const db = require('./_db');
 const request = require('./_request');
 const assert = require('chai').assert;
-// const Film = require('../../lib/models/film');
-// const Studio = require('../../lib/models/studio');
-// const Cast = require('../../lib/models/cast');
 
 
-describe.only('films api', () => {
+describe('films api', () => {
 
     before(db.drop);
 
