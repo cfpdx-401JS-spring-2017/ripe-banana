@@ -32,7 +32,7 @@ describe('film API', () => {
         released: 1980
     };
 
-    function savefilm(film) {
+    function saveFilm(film) {
         film.studio = studio._id;
         return request
             .post('/films')
@@ -41,7 +41,7 @@ describe('film API', () => {
     }
 
     it('roundtrips a new film', () => {
-        return savefilm(simpsons)
+        return saveFilm(simpsons)
             .then(saved => {
                 assert.ok(saved._id);
                 simpsons = saved;
@@ -67,7 +67,7 @@ describe('film API', () => {
     });
 
     it('gets all films', () => {
-        return savefilm(bigTrouble)
+        return saveFilm(bigTrouble)
             .then(saved => {
                 bigTrouble = saved;
             })
@@ -118,7 +118,7 @@ describe('film API', () => {
     });
 
     it('returns validation error correclty', () => {
-        return savefilm({})
+        return saveFilm({})
             .then(
             () => { throw new Error('expected failure'); },
             () => { }
@@ -148,7 +148,7 @@ describe('film API', () => {
             released: 1987
         };
 
-        return savefilm(coolFilm)
+        return saveFilm(coolFilm)
             .then(savedFilm => coolFilm = savedFilm)
             .then(() => request.get(`/films/${coolFilm._id}`))
             .then(res => res.body)

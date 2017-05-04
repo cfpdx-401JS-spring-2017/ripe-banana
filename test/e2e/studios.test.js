@@ -73,7 +73,6 @@ describe.only('studio API', () => {
             .then(() => request.get('/studios'))
             .then(res => res.body)
             .then(studios => {
-                console.log('studios', studios, 'bigstudio',  bigStudio);
                 assert.equal(studios.length, 2);
                 assert.include(studios, {
                     _id: bigStudio._id,
@@ -119,7 +118,7 @@ describe.only('studio API', () => {
             });
     });
 
-    it('returns validation error correclty', () => {
+    it('returns validation error correctly', () => {
         return saveStudio({})
             .then(
             () => { throw new Error('expected failure'); },
@@ -127,27 +126,63 @@ describe.only('studio API', () => {
             );
     });
 
-// TODO: refactor this to work with the implentation. partway done
-    it('saved a studio with films', () => {
-        let studio = {
+    describe('saving studio with related model data', () => {
+
+
+        let testStudio = {
             name: 'cool studio',
-            address: {},
-            films: [{
-                films: studio.film._id
-            }]
         };
-        return saveStudio(studio)
-            .then(saved => {
-                studio = saved;
-                assert.ok(studio.films.length);
-            })
-            .then(() => request.get(`/studios/${studio._id}`))
-            .then(res => res.body)
-            .then(studios => {
-                assert.deepEqual(studios.films, [{
-                    title: studio.film.title
-                    // add other fields if needed
-                }]);
-            });
+
+// TODO: add in actor and casts field, right now I always get internal server error when 
+// i do.
+        // let testActor = {
+        //     name: 'test actor',
+        //     dob: 1456
+        // };
+
+        let testFilm = {
+            title: 'test film',
+            // cast: [{
+                // actor: testActor._id,
+                // role: 'test role'
+            // }],
+            released: 1950
+        };
+
+        function saveFilm(film) {
+            film.studio = testStudio._id;
+            return request
+                .post('/films')
+                .send(film)
+                .then(res => res.body);
+        }
+
+        it('saved a studio with films', () => {
+            return saveStudio(testStudio)
+                .then(savedStudio => {
+                    assert.ok(savedStudio._id);
+                    testStudio = savedStudio;
+                })
+                .then(() => {
+                    return saveFilm(testFilm)
+                        .then(savedFilm => {
+                            assert.ok(savedFilm._id);
+                            assert.ok(savedFilm.studio);
+                            assert.equal(savedFilm.studio, testStudio._id);
+                            assert.ok(savedFilm.cast);
+                            assert.equal(savedFilm.released, 1950);
+                        });
+                })
+                .then(() => request.get(`/studios/${testStudio._id}`))
+                .then(res => res.body)
+                .then(studio => {
+                    assert.deepEqual(studio.films, [{
+                        title: studio.films[0].title,
+                        _id: studio.films[0]._id,
+                        released: studio.films[0].released,
+                        cast: studio.films[0].cast
+                    }]);
+                });
+        });
     });
 });
