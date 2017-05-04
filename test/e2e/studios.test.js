@@ -186,3 +186,5 @@ describe.only('studio API', () => {
         });
     });
 });
+
+// TODO: ensure that the limits on deleting are done
