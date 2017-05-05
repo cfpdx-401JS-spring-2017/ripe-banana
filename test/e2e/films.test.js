@@ -137,7 +137,7 @@ describe('film API', () => {
             .then(saved => actor = saved);
     });
 
-    it('saved a film with films', () => {
+    it('saved a film with a studio', () => {
         let coolFilm = {
             title: 'cool film',
             cast: [{

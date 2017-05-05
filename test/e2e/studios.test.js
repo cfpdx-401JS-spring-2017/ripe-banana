@@ -110,20 +110,58 @@ describe.only('studio API', () => {
             });
     });
 
-    it('deleting a non-existent studio returns removed:false', () => {
-        return request.delete(`/studios/${littleStudio._id}`)
-            .then(res => res.body)
-            .then(result => {
-                assert.isFalse(result.removed);
-            });
-    });
+    let sillyStudio = {
+        name: 'big studio'
+    };
 
-    it('returns validation error correctly', () => {
-        return saveStudio({})
-            .then(
-            () => { throw new Error('expected failure'); },
-            () => { }
-            );
+    describe('checking that studios cannot be deleted if films exits', () => {
+
+        before(() => {
+            return saveStudio(sillyStudio)
+                .then(saved => {
+                    sillyStudio = saved;
+                });
+        });
+
+        before(() => {
+            let simpsons2 = {
+                title: 'simpsons',
+                released: 1920,
+                studio: sillyStudio._id
+            };
+
+            return request
+                .post('/films')
+                .send(simpsons2)
+                .then(res => res.body);
+        });
+
+        it('does not delete a studio if it has films', () => {
+            return request.delete(`/studios/${sillyStudio._id}`)
+                .then(res => res.body)
+                .then(
+                () => { throw new Error('expected 401'); },
+                res => {
+                    assert.equal(res.status, 401);
+                });
+        });
+
+        it('deleting a non-existent studio returns removed:false', () => {
+            return request.delete(`/studios/${littleStudio._id}`)
+                .then(res => res.body)
+                .then(result => {
+                    assert.isFalse(result.removed);
+                });
+        });
+
+        it('returns validation error correctly', () => {
+            return saveStudio({})
+                .then(
+                () => { throw new Error('expected failure'); },
+                () => { }
+                );
+        });
+
     });
 
     describe('saving studio with related model data', () => {
@@ -133,19 +171,8 @@ describe.only('studio API', () => {
             name: 'cool studio',
         };
 
-// TODO: add in actor and casts field, right now I always get internal server error when 
-// i do.
-        // let testActor = {
-        //     name: 'test actor',
-        //     dob: 1456
-        // };
-
         let testFilm = {
             title: 'test film',
-            // cast: [{
-                // actor: testActor._id,
-                // role: 'test role'
-            // }],
             released: 1950
         };
 
@@ -153,8 +180,7 @@ describe.only('studio API', () => {
             film.studio = testStudio._id;
             return request
                 .post('/films')
-                .send(film)
-                .then(res => res.body);
+                .send(film);
         }
 
         it('saved a studio with films', () => {
@@ -165,12 +191,15 @@ describe.only('studio API', () => {
                 })
                 .then(() => {
                     return saveFilm(testFilm)
-                        .then(savedFilm => {
-                            assert.ok(savedFilm._id);
-                            assert.ok(savedFilm.studio);
-                            assert.equal(savedFilm.studio, testStudio._id);
-                            assert.ok(savedFilm.cast);
-                            assert.equal(savedFilm.released, 1950);
+                        .then(saved => {
+                            testFilm = saved;
+                        })
+                        .then(testFilm => {
+                            assert.ok(testFilm._id);
+                            assert.ok(testFilm.studio);
+                            assert.equal(testFilm.studio, testStudio._id);
+                            assert.ok(testFilm.cast);
+                            assert.equal(testFilm.released, 1950);
                         });
                 })
                 .then(() => request.get(`/studios/${testStudio._id}`))
@@ -180,11 +209,11 @@ describe.only('studio API', () => {
                         title: studio.films[0].title,
                         _id: studio.films[0]._id,
                         released: studio.films[0].released,
-                        cast: studio.films[0].cast
+                        // cast: studio.films[0].cast
                     }]);
                 });
         });
     });
 });
 
-// TODO: ensure that the limits on deleting are done
+// TODO, SAVING THE FILM AND CHECKING IT IS RETURNING UNDEFINED
