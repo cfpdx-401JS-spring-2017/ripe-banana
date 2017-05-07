@@ -166,7 +166,6 @@ describe.only('studio API', () => {
 
     describe('saving studio with related model data', () => {
 
-
         let testStudio = {
             name: 'cool studio',
         };
@@ -180,7 +179,8 @@ describe.only('studio API', () => {
             film.studio = testStudio._id;
             return request
                 .post('/films')
-                .send(film);
+                .send(film)
+                .then(res => res.body);
         }
 
         it('saved a studio with films', () => {
@@ -192,13 +192,12 @@ describe.only('studio API', () => {
                 .then(() => {
                     return saveFilm(testFilm)
                         .then(saved => {
-                            testFilm = saved;
+                            return testFilm = saved;
                         })
                         .then(testFilm => {
                             assert.ok(testFilm._id);
                             assert.ok(testFilm.studio);
                             assert.equal(testFilm.studio, testStudio._id);
-                            assert.ok(testFilm.cast);
                             assert.equal(testFilm.released, 1950);
                         });
                 })
@@ -209,11 +208,9 @@ describe.only('studio API', () => {
                         title: studio.films[0].title,
                         _id: studio.films[0]._id,
                         released: studio.films[0].released,
-                        // cast: studio.films[0].cast
+                        cast: studio.films[0].cast
                     }]);
                 });
         });
     });
 });
-
-// TODO, SAVING THE FILM AND CHECKING IT IS RETURNING UNDEFINED
