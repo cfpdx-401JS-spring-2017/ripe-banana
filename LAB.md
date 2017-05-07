@@ -74,11 +74,11 @@ that made them as well as the actors in the film.
 route | returns
 ---|---
 `GET /studios` | [ { name } ] done
-`GET /studios/:id` | { name, address, films: [ title ] } 
+`GET /studios/:id` | { name, address, films: [ title ] } done
 `GET /films` | [{ title, studio.name }] done
 `GET /films/:id` | { title, studio.name, cast: [ { role, actor-name } ] } done
-`GET /actors` | [{ name, dob }]
-`GET /actors/:id` | { name, dob, BONUS: [ film name ] }
+`GET /actors` | [{ name, dob }] done
+`GET /actors/:id` | { name, dob, BONUS: [ film name ] } done
 
 #### POST/PATCH
 
