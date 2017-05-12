@@ -14,7 +14,17 @@ describe('actors API', () => {
       });
   });
 
-  let fakeActor = {
+  let fakeActor1 = {
+    name: 'Lief Garret',
+    dob: 1974
+  };
+
+  // let fakeActor2 = {
+  //   name: 'Lief Garret',
+  //   dob: 1974
+  // };
+
+  let fakeActor3 = {
     name: 'Lief Garret',
     dob: 1974
   };
@@ -27,22 +37,22 @@ describe('actors API', () => {
   }
 
   it('roundtrips an actor', () => {
-    return savedActor(fakeActor)
+    return savedActor(fakeActor1)
       .then(savedActor => {
         assert.ok(savedActor._id, 'saved has id');
-        fakeActor = savedActor;
+        fakeActor1 = savedActor;
       })
       .then(() => {
-        return request.get(`/api/actors/${fakeActor._id}`);
+        return request.get(`/api/actors/${fakeActor1._id}`);
       })
       .then(res => res.body)
       .then(got => {
-        assert.deepEqual(got, fakeActor);
+        assert.deepEqual(got, fakeActor1);
       });
   });
 
   it('deletes an actor', () => {
-    return request.delete(`/api/actors/${fakeActor._id}`)
+    return request.delete(`/api/actors/${fakeActor1._id}`)
       .then(res => res.body)
       .then(result => {
         assert.isTrue(result.removed);
@@ -51,6 +61,16 @@ describe('actors API', () => {
       .then(res => res.body)
       .then(actors => {
         assert.equal(actors.length, 0);
+      });
+  });
+
+  it('updates actors', () => {
+    fakeActor3.name = 'Jeremy';
+    return request.put(`/api/actors/${fakeActor3._id}`)
+      .send(fakeActor3)
+      .then(res => res.body)
+      .then(updated => {
+        assert.equal(updated.name, 'Jeremy');
       });
   });
 });
