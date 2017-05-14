@@ -19,16 +19,6 @@ describe('actors API', () => {
     dob: 1974
   };
 
-  // let fakeActor2 = {
-  //   name: 'Lief Garret',
-  //   dob: 1974
-  // };
-
-  let fakeActor3 = {
-    name: 'Lief Garret',
-    dob: 1974
-  };
-
   function savedActor(actor) {
     return request
       .post('/api/actors')
@@ -51,6 +41,16 @@ describe('actors API', () => {
       });
   });
 
+  it('updates actors', () => {
+    fakeActor1.name = 'Jeremy';
+    return request.put(`/api/actors/${fakeActor1._id}`)
+      .send(fakeActor1)
+      .then(res => res.body)
+      .then(updated => {
+        assert.equal(updated.name, 'Jeremy');
+      });
+  });
+
   it('deletes an actor', () => {
     return request.delete(`/api/actors/${fakeActor1._id}`)
       .then(res => res.body)
@@ -61,16 +61,6 @@ describe('actors API', () => {
       .then(res => res.body)
       .then(actors => {
         assert.equal(actors.length, 0);
-      });
-  });
-
-  it('updates actors', () => {
-    fakeActor3.name = 'Jeremy';
-    return request.put(`/api/actors/${fakeActor3._id}`)
-      .send(fakeActor3)
-      .then(res => res.body)
-      .then(updated => {
-        assert.equal(updated.name, 'Jeremy');
       });
   });
 });
