@@ -19,6 +19,16 @@ describe('actors API', () => {
     dob: 1974
   };
 
+  let fakeActor2 = {
+    name: 'Alice N. Wonderland',
+    dob: 1814
+  };
+
+  let fakeActor3 = {
+    name: 'Liam Neeson',
+    dob: 1960
+  };
+
   function savedActor(actor) {
     return request
       .post('/api/actors')
@@ -51,6 +61,29 @@ describe('actors API', () => {
       });
   });
 
+  it('returns list of all actors', () => {
+    return Promise.all([
+      savedActor(fakeActor2),
+      savedActor(fakeActor3)
+    ])
+      .then(newSavedActor => {
+        fakeActor2 = newSavedActor[0];
+        fakeActor3 = newSavedActor[1];
+      })
+      .then(() => request.get('/api/actors'))
+      .then(res => res.body)
+      .then(actors => {
+        assert.equal(actors.length, 3);
+        function test(fakeActor) {
+          assert.include(actors, { name: fakeActor.name, _id: fakeActor._id, dob: fakeActor.dob });
+        }
+
+        test(fakeActor1);
+        test(fakeActor2);
+        test(fakeActor3);
+      });
+  });
+
   it('deletes an actor', () => {
     return request.delete(`/api/actors/${fakeActor1._id}`)
       .then(res => res.body)
@@ -60,7 +93,7 @@ describe('actors API', () => {
       .then(() => request.get('/api/actors'))
       .then(res => res.body)
       .then(actors => {
-        assert.equal(actors.length, 0);
+        assert.equal(actors.length, 2);
       });
   });
 });
