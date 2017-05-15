@@ -39,6 +39,8 @@ describe('studios API', () => {
         return request.get(`/api/studios/${fakeStudio._id}`);
       })
       .then(res => {
+        delete fakeStudio.__v;
+        fakeStudio.films = [];
         const studio = res.body;
         assert.deepEqual(studio, fakeStudio);
       });
