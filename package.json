@@ -1,0 +1,33 @@
+{
+  "name": "ripe-banana",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "eslint .",
+    "test": "mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mofo37/ripe-banana.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mofo37/ripe-banana/issues"
+  },
+  "homepage": "https://github.com/mofo37/ripe-banana#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "mongoose": "^4.9.6",
+    "morgan": "^1.8.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "^3.3.0"
+  }
+}
