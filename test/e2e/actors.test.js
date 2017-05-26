@@ -14,7 +14,7 @@ describe('actor API', () => {
             });
     });
 
-    const coolActor = {
+    let coolActor = {
         name: 'brad pitt',
         dob: 1043
     };
@@ -30,7 +30,7 @@ describe('actor API', () => {
         return saveActor(coolActor)
             .then(saved => {
                 assert.ok(saved._id);
-                saved = coolActor;
+                coolActor = saved;
             })
             .then(() => {
                 return request.get(`/actors/${coolActor._id}`);
