@@ -35,8 +35,7 @@ that made them as well as the actors in the film.
   title: <name-of-film>,
   studio: <studio-id>,
   released: <year>
-  cast: [cast-subdocument],
-  reviews: [<review-id>]
+  cast: [cast-subdocument]
 }
 ```
 
@@ -79,13 +78,13 @@ route | returns
 `GET /films` | [{ title, studio.name }]
 `GET /films/:id` | { title, studio.name, cast: [ { role, actor-name } ] }
 `GET /actors` | [{ name, dob }]
-`GET /actors/:id` | { name, dob }
+`GET /actors/:id` | { name, dob, BONUS: [ film name ] }
 
 #### POST/PATCH
 
 Studio, Films, and Actors can be added or updated.
 
-Actors and reviews are added to films by updating the film.
+Actors are added to films by updating the film.
 
 #### DELETE
 
